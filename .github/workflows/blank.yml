@@ -21,3 +21,5 @@ jobs:       # роботы, которые будут выполняться
       run: coverage run talk_with_me/test.py
     - name: Tests report                # Покрытие тестами
       run: coverage report
+    - name: Black Code Formatter
+      uses: lgeiger/black-action@v1.0.1
