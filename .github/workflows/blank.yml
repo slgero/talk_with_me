@@ -22,4 +22,4 @@ jobs:       # роботы, которые будут выполняться
     - name: Tests report                # Покрытие тестами
       run: coverage report
     - name: Black Code Formatter
-      run: black talk_with_me/
+      run: black --check talk_with_me/
