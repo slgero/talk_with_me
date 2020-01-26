@@ -18,11 +18,7 @@ jobs:       # роботы, которые будут выполняться
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run tests                   # Запуск тестов
-      run: |
-        coverage html
-        coverage report --include="talk_with_me/*"
-        coverage xml
-        codecov -f coverage.xml --token=secrets.CODECOV_TOKEN
+      run: coverage run talk_with_me/test.py
     - name: Tests report                # Покрытие тестами
       run: coverage report
     - name: Black Code Formatter        # Проверка форматирования кода
