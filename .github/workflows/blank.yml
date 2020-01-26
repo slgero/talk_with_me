@@ -22,6 +22,6 @@ jobs:       # роботы, которые будут выполняться
     - name: Tests report                # Покрытие тестами
       run: |
         coverage xml
-        bash <(curl -s https://codecov.io/bash) -t secrets.CODECOV_TOKEN
+        bash <(curl -s https://codecov.io/bash) -t $secrets.CODECOV_TOKEN
     - name: Black Code Formatter        # Проверка форматирования кода
       run: black --check talk_with_me/
