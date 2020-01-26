@@ -9,13 +9,15 @@ from perfect_regex import *
 class Data4ML:
     def __init__(self, path_to_config="./data_params.json"):
         cfg = self.read_json(path_to_config)
-        self.blacklist = [
-            "Фотография",
-            "Аудиозапись",
-            "Документ",
-            "Видеозапись",
+        self.blacklist = ["Фотография", "Документ", "Видеозапись"]
+        self.message_ends = [
             "прикреплённое сообщение",
+            "прикреплённых сообщений",
+            "прикреплённых сообщения",
             "Запись на стене",
+            "Сообщение удалено",
+            "\nКарта",
+            "\nСтикер",
         ]
 
     def get_list_of_files_in_folder(self, folder_name: str) -> list:
@@ -47,41 +49,32 @@ class Data4ML:
                 message = message.text.strip()
 
     def clear_message(self, messages: list) -> list:
-        blacklist = ["Фотография", "Документ", "Видеозапись"]
-        message_ends = [
-            "прикреплённое сообщение",
-            "прикреплённых сообщений",
-            "прикреплённых сообщения",
-            "Запись на стене",
-            "Сообщение удалено",
-            "\nКарта",
-            "\nСтикер",
-        ]
-
-        clean_messages = []
+        cleared_messages = []
         for i in messages:
-            # If URL in message - not append this message:
+            # If `Ссылка` in message - not append this message:
             if "\nСсылка\nhttps:" in i:
                 continue
 
-            for end in message_ends:
+            # Delete trash such as stickers, attached messages:
+            for end in self.message_ends:
                 if i.endswith(end):
                     i = i[: i.rfind("\n")]
 
-            # delet url:
-            for attachment in blacklist:
+            # Delete attachments such as photos, documents, ect.:
+            for attachment in self.blacklist:
                 i = re.sub(f"\n{attachment}\n" + perfect_url_regex, "", i)
 
-            # delete trash:
+            # Delete trash:
             i = re.sub(perfect_emoji_regex, "", i)
             i = re.sub(perfect_email_regex, "", i)
             i = re.sub(perfect_phone_regex, " ", i)
             i = re.sub(perfect_url_regex, "", i)
 
+            i = i.replace("  ", " ")  # remove double space
             i = i.strip()
             if i:
-                clean_messages.append(i)
-        return clean_messages
+                cleared_messages.append(i)
+        return cleared_messages
 
     @staticmethod
     def read_json(path_to_config: str) -> dict:

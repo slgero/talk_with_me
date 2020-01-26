@@ -46,8 +46,8 @@ class TestData4ML(unittest.TestCase):
             "\n25 прикреплённых сообщений",
             "yanko.julia@yandex.ru",
         ]
-        for mes in samples_empty:
-            self.assertEqual(self.data4ml.clear_message([mes]), [])
+        for message in samples_empty:
+            self.assertEqual(self.data4ml.clear_message([message]), [])
 
 
 class TestPerfectRegex(unittest.TestCase):
