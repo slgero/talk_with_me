@@ -1,5 +1,1 @@
-from . import (
-    perfect_regex,
-    data4ml,
-    test
-)
+from . import perfect_regex, data4ml, test
