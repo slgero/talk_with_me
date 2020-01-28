@@ -2,11 +2,116 @@ import unittest
 from data4ml import Data4ML
 from perfect_regex import *
 import re
+import tempfile
+from pathlib import Path
 
 
 class TestData4ML(unittest.TestCase):
     def setUp(self):
         self.data4ml = Data4ML()
+
+    def test_get_list_of_files_in_folder(self):
+        def create_tmp_files(
+            answer, files_count=None, file_numbers=None, suffix=".html", **kwargs
+        ):
+            """
+            Сreate temporary files for testing.
+
+            Params:
+            ------
+            
+            answer: int or list
+                Value for comparison.
+            files_count: int or None (default=None)
+                Number of files to create.
+            file_numbers: list or None (default=None)
+                List of file names for testing the sort function.
+            """
+
+            range_of_files = range(files_count) if files_count else file_numbers
+
+            # Create a temporary directory:
+            with tempfile.TemporaryDirectory() as dirpath:
+                for i in range_of_files:
+                    # Create a tmp file:
+                    fd, path = tempfile.mkstemp(suffix=suffix, dir=dirpath)
+
+                    # Rename the file to bring it to standard:
+                    p = Path(path)
+                    p.rename(Path(p.parent, f"messages{i}{p.suffix}"))
+
+                files = self.data4ml.get_list_of_files_in_folder(dirpath, **kwargs)
+                if files_count:
+                    # Check the number of files in a folder:
+                    self.assertEqual(len(files), answer)
+                else:
+                    # Check proper file sorting:
+                    self.assertEqual(files, answer)
+
+        # Check the number of files in a folder:
+        create_tmp_files(answer=4, files_count=4)
+        create_tmp_files(answer=0, files_count=4, suffix=".txt")
+        create_tmp_files(answer=0, files_count=4, limit=5)
+        create_tmp_files(answer=4, files_count=4, limit=4)
+
+        # Check proper file sorting:
+        create_tmp_files(
+            answer=["messages100.html", "messages10.html", "messages1.html"],
+            file_numbers=[1, 10, 100],
+        )
+        create_tmp_files(
+            answer=["messages100.html", "messages10.html", "messages1.html"],
+            file_numbers=[100, 10, 1],
+        )
+        create_tmp_files(
+            answer=["messages100.html", "messages10.html", "messages1.html"],
+            file_numbers=[100, 1, 10],
+        )
+        create_tmp_files(
+            answer=["messages210.html", "messages200.html", "messages1.html"],
+            file_numbers=[200, 1, 210],
+        )
+        create_tmp_files(
+            answer=["messages300.html", "messages200.html", "messages40.html"],
+            file_numbers=[300, 40, 200],
+        )
+
+    def test_get_list_of_folders(self):
+        def create_tmp_folders(answer: int, folder_names: list):
+            """
+            Сreate temporary directories for testing.
+            
+            Params:
+            ------
+            
+            answer: int
+                Value for comparison.
+            folder_names: list
+                List of folder names.
+            """
+
+            # Create the main directory:
+            with tempfile.TemporaryDirectory() as dirpath:
+                for folder_name in folder_names:
+                    # Create a tmp folder:
+                    path = tempfile.mkdtemp(dir=dirpath)
+
+                    # Rename the folder to bring it to standard:
+                    p = Path(path)
+                    p.rename(Path(p.parent, folder_name))
+
+                folders = self.data4ml.get_list_of_folders(dirpath)
+                self.assertEqual(len(folders), answer)
+
+        create_tmp_folders(0, [])
+        create_tmp_folders(0, ["-185144161"])  # VK groups or applications
+        create_tmp_folders(0, ["18514"])  # some kind of service letters
+        create_tmp_folders(0, ["2000000043"])  # group chats
+        create_tmp_folders(1, ["185144161"])
+        create_tmp_folders(1, ["185144161", "-185144161"])
+        create_tmp_folders(1, ["185144161", "-185144161", "18514"])
+        create_tmp_folders(1, ["185144161", "-185144161", "18514", "2000000043"])
+        create_tmp_folders(2, ["185144161", "185144162"])
 
     def test_clear_message(self):
         samples = {

@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 import json
-from os import listdir
-from os.path import isfile, isdir, join
+import os
 import re
 from perfect_regex import *
 
@@ -27,16 +26,18 @@ class Data4ML:
 
         RES = []
         for folder in self.get_list_of_folders(HOME_FOLDER):
-            files = self.get_list_of_files_in_folder(join(HOME_FOLDER, folder), limit=4)
+            files = self.get_list_of_files_in_folder(
+                os.path.join(HOME_FOLDER, folder), limit=4
+            )
             if files:
-                RES.append(self.parse_html(join(HOME_FOLDER, folder), files))
+                RES.append(self.parse_html(os.path.join(HOME_FOLDER, folder), files))
 
     def get_list_of_folders(self, messages_path: str) -> list:
         folders = []
 
         if os.path.isdir(messages_path):
-            for folder in listdir(messages_path):
-                if not os.path.isdir(join(messages_path, folder)):
+            for folder in os.listdir(messages_path):
+                if not os.path.isdir(os.path.join(messages_path, folder)):
                     continue
                 if folder.startswith("-"):  # VK groups or applications
                     continue
@@ -54,7 +55,7 @@ class Data4ML:
 
         if os.path.isdir(folder_name):
             # Get list of only html files from folder:
-            files = [file for file in listdir(folder_name) if file.endswith(".html")]
+            files = [file for file in os.listdir(folder_name) if file.endswith(".html")]
 
             if len(files) < limit:  # short dialogs
                 return []
@@ -74,7 +75,7 @@ class Data4ML:
         messages = []
 
         for file in files:
-            with open(join(folder, file), "rb") as f:
+            with open(os.path.join(folder, file), "rb") as f:
                 soup = BeautifulSoup(f, "lxml")
 
             for message in soup.find_all("div", {"class": "message"}):
