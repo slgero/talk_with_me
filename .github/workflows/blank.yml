@@ -23,5 +23,7 @@ jobs:       # роботы, которые будут выполняться
       run: |
         coverage xml
         bash <(curl -s https://codecov.io/bash) -t 9393fc09-5527-46ff-8086-85221f6c8890
-    - name: Black Code Formatter        # Проверка форматирования кода
+    - name: black
+      run: black talk_with_me/
+    - name: black check        # Проверка форматирования кода
       run: black --check talk_with_me/
