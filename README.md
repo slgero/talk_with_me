@@ -17,6 +17,14 @@
     </a>
   </td>
 </tr>
+<tr>
+  <td>Code quality</td>
+  <td>
+    <a href='https://www.codefactor.io/repository/github/slgero/talk_with_me'>
+    <img src="https://img.shields.io/codefactor/grade/github/slgero/talk_with_me?logo=codefactor&style=flat-square" />
+    </a>
+  </td>
+</tr>
 </table>
 
 
