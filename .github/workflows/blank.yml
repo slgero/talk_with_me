@@ -37,5 +37,3 @@ jobs:       # роботы, которые будут выполняться
         git config --local user.name "GitHub Action"
         git commit -m "ci: Automated build push" -a | exit 0
         git push ${REMOTE} master
-    - name: Push changes
-      
