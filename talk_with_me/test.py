@@ -6,8 +6,6 @@ import tempfile
 from pathlib import Path
 
 
-
-
 class TestPerfectRegex(unittest.TestCase):
     def test_telephone_numbers(self):
         telephone_numbers = [
