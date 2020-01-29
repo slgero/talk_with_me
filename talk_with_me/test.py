@@ -5,6 +5,7 @@ import re
 import tempfile
 from pathlib import Path
 
+
 class TestData4ML(unittest.TestCase):
     def setUp(self):
         self.data4ml = Data4ML()
@@ -152,7 +153,7 @@ class TestData4ML(unittest.TestCase):
         for message in samples_empty:
             self.assertEqual(self.data4ml.clear_message([message]), [])
 
-            
+
 class TestPerfectRegex(unittest.TestCase):
     def test_telephone_numbers(self):
         telephone_numbers = [
