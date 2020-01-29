@@ -5,6 +5,7 @@ import re
 from perfect_regex import *
 
 
+
 class Data4ML:
     def __init__(self, path_to_config="./data_params.json"):
         cfg = self.read_json(path_to_config)
