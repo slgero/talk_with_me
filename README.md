@@ -13,7 +13,7 @@
   <td>Build Status</td>
   <td>
     <a href='https://github.com/slgero/talk_with_me/actions'>
-    <img src="https://github.com/slgero/talk_with_me/workflows/CI/badge.svg" alt="build" />
+    <img src="https://github.com/slgero/talk_with_me/workflows/CI/badge.svg?branch=master" />
     </a>
   </td>
 </tr>
