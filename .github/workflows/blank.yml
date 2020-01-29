@@ -27,13 +27,17 @@ jobs:       # роботы, которые будут выполняться
       run: black talk_with_me/
     - name: black check        # Проверка форматирования кода
       run: black --check talk_with_me/
+      
     - name: Commit files
       run: |
-        REMOTE=https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-        git pull ${REMOTE}
-        git checkout master
+        echo ${{ github.ref }}
         git add .
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git commit -m "ci: Automated build push" -a | exit 0
-        git push ${REMOTE} master
+    - name: Push changes
+      if: github.ref == 'refs/heads/master'
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
