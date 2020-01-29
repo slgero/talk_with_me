@@ -1,6 +1,11 @@
 import unittest
 from data4ml import Data4ML
-from perfect_regex import *
+from perfect_regex import (
+    perfect_url_regex,
+    perfect_emoji_regex,
+    perfect_email_regex,
+    perfect_phone_regex,
+)
 import re
 import tempfile
 from pathlib import Path

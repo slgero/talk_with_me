@@ -2,7 +2,12 @@ from bs4 import BeautifulSoup
 import json
 import os
 import re
-from perfect_regex import *
+from perfect_regex import (
+    perfect_url_regex,
+    perfect_emoji_regex,
+    perfect_email_regex,
+    perfect_phone_regex,
+)
 
 
 class Data4ML:
@@ -53,6 +58,7 @@ class Data4ML:
 
     def get_list_of_files_in_folder(self, folder_name: str, limit=1) -> list:
 
+        files = []
         if os.path.isdir(folder_name):
             # Get list of only html files from folder:
             files = [file for file in os.listdir(folder_name) if file.endswith(".html")]
@@ -66,10 +72,10 @@ class Data4ML:
                 key=lambda x: int(re.search("messages(\d+)\.html", x).group(1)),
                 reverse=True,
             )
-            return files
         else:
             print(f"No such directory: {folder_name}")
-            return []
+
+        return files
 
     def parse_html(self, folder: str, files: list):
         messages = []
