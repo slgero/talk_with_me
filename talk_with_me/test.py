@@ -49,7 +49,7 @@ class TestData4ML(unittest.TestCase):
                     self.assertEqual(files, answer)
 
         # Check the number of files in a folder:
-        create_tmp_files(answer=0, files_count=4)
+        create_tmp_files(answer=4, files_count=4)
         create_tmp_files(answer=0, files_count=4, suffix=".txt")
         create_tmp_files(answer=0, files_count=4, limit=5)
         create_tmp_files(answer=4, files_count=4, limit=4)
