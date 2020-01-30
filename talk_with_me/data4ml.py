@@ -26,15 +26,15 @@ class Data4ML(ABC):
             "\nКарта",
             "\nСтикер",
         ]
-        
+
     @abstractmethod
     def make_data():
         pass
-    
+
     @abstractmethod
     def parse_html(self, folder: str, files: list) -> list:
         pass
-    
+
     def get_list_of_folders(self, messages_path: str) -> list:
         folders = []
 
@@ -54,7 +54,7 @@ class Data4ML(ABC):
         return folders
 
     def get_list_of_files_in_folder(self, folder_name: str, limit=1) -> list:
-        
+
         files = []
         if os.path.isdir(folder_name):
             # Get list of only html files from folder:
@@ -72,10 +72,9 @@ class Data4ML(ABC):
         else:
             print(f"No such directory: {folder_name}")
         return files
-    
-    
+
     def clear_message(self, messages: list) -> list:
-        assert(isinstance(messages, list))
+        assert isinstance(messages, list)
         cleared_messages = []
         for i in messages:
             # If `Ссылка` in message - not append this message:
@@ -109,9 +108,8 @@ class Data4ML(ABC):
             cfg = json.load(f)
         return cfg
 
-    
+
 class Data4TextGeneration(Data4ML):
-    
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -124,7 +122,6 @@ class Data4TextGeneration(Data4ML):
             if files:
                 RES.append(self.parse_html(os.path.join(HOME_FOLDER, folder), files))
         return RES
-                
 
     def parse_html(self, folder: str, files: list) -> list:
         messages = []
@@ -139,5 +136,3 @@ class Data4TextGeneration(Data4ML):
 
         messages = messages[::-1]  # reverse
         return messages
-
-
