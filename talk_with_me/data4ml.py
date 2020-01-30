@@ -110,29 +110,37 @@ class Data4ML(ABC):
 
 
 class Data4TextGeneration(Data4ML):
+    """
+    Collects the entire message together, both yours and other 
+    members in the correspondence.
+    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def make_data(self) -> list:
-        RES = []
-        for folder in self.get_list_of_folders(HOME_FOLDER):
-            files = self.get_list_of_files_in_folder(
-                os.path.join(HOME_FOLDER, folder), limit=4
-            )
+    def make_data(self, limit=2) -> list:
+        result = []
+        for folder in self.get_list_of_folders(self.home_folder):
+            parent_folder = os.path.join(self.home_folder, folder)
+            files = self.get_list_of_files_in_folder(parent_folder, limit=limit)
             if files:
-                RES.append(self.parse_html(os.path.join(HOME_FOLDER, folder), files))
-        return RES
+                messages = self.parse_html(parent_folder, files)
+                clear_messages = self.clear_message(messages)
+                result.append(clear_messages)
+        return result
 
-    def parse_html(self, folder: str, files: list) -> list:
-        messages = []
+    def parse_html(self, parent_folder: str, files: list) -> list:
 
+        all_messages = []
         for file in files:
-            with open(os.path.join(folder, file), "rb") as f:
+            with open(os.path.join(parent_folder, file), "rb") as f:
                 soup = BeautifulSoup(f, "lxml")
 
+            messages = []
             for message in soup.find_all("div", {"class": "message"}):
                 message = message.text.strip()
                 messages.append(message[message.find("\n") + 1 :])
 
-        messages = messages[::-1]  # reverse
-        return messages
+            #           Reverse the list to save the message sequence:
+            all_messages.extend(messages[::-1])
+        return all_messages
