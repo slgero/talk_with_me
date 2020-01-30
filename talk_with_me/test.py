@@ -270,7 +270,7 @@ class TestData4TextGeneration(unittest.TestCase):
                 "спасибо",
                 "Спасибо",
                 "а до скольких?",
-                "спасибparо",
+                "спасибо",
             ],
         ]
 
