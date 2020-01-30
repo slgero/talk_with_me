@@ -49,6 +49,7 @@ class Data4ML(ABC):
                 if len(folder) == 10:  # group chats
                     continue
                 folders.append(folder)
+                folders.sort()
         else:
             print(f"No such directory: {messages_path}")
         return folders
