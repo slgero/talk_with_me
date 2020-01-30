@@ -118,6 +118,8 @@ class TestData4ML(unittest.TestCase):
         create_tmp_folders(2, ["185144161", "185144162"])
 
     def test_clear_message(self):
+
+        # Testing for garbage removal from messages:
         samples = {
             "Привет, как дела?": "Привет, как дела?",
             "   Привет, как дела?   ": "Привет, как дела?",
@@ -140,6 +142,7 @@ class TestData4ML(unittest.TestCase):
         for key, value in samples.items():
             self.assertEqual(self.TextGen.clear_message([key]), [value])
 
+        # Testing deleting an entire message:
         samples_empty = [
             "  ",
             " \n \n \n ",
@@ -157,6 +160,19 @@ class TestData4ML(unittest.TestCase):
         ]
         for message in samples_empty:
             self.assertEqual(self.TextGen.clear_message([message]), [])
+
+        # Test atribute:
+        self.assertRaises(AssertionError, self.TextGen.clear_message, "message")
+
+    def test_read_json(self):
+        # Test valid path:
+        res = self.TextGen.read_json("./data_params.json")
+        self.assertIsInstance(res, dict)
+
+        # Test wrong path:
+        self.assertRaises(
+            FileNotFoundError, self.TextGen.read_json, "./wrong_path.json"
+        )
 
 
 class TestPerfectRegex(unittest.TestCase):
@@ -187,8 +203,8 @@ class TestPerfectRegex(unittest.TestCase):
             "8(800)555-35-35",
         ]
 
-        for numbers in telephone_numbers:
-            self.assertEqual(re.sub(perfect_phone_regex, "", numbers), "")
+        for number in telephone_numbers:
+            self.assertRegex(number, perfect_phone_regex)
 
     def test_emails(self):
         emails = [
@@ -199,7 +215,7 @@ class TestPerfectRegex(unittest.TestCase):
         ]
 
         for email in emails:
-            self.assertEqual(re.sub(perfect_email_regex, "", email), "")
+            self.assertRegex(email, perfect_email_regex)
 
     def test_urls(self):
         urls = [
@@ -211,13 +227,13 @@ class TestPerfectRegex(unittest.TestCase):
         ]
 
         for url in urls:
-            self.assertEqual(re.sub(perfect_url_regex, "", url), "")
+            self.assertRegex(url, perfect_url_regex)
 
     def test_emojis(self):
         emojis = ["👩\u200d", "👧\u200d"]
 
         for emoji in emojis:
-            self.assertEqual(re.sub(perfect_emoji_regex, "", emoji), emoji[0])
+            self.assertRegex(emoji, perfect_emoji_regex)
 
 
 if __name__ == "__main__":
