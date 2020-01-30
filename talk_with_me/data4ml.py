@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import json
 import os
 import re
+from abc import ABC, abstractmethod
 from perfect_regex import (
     perfect_url_regex,
     perfect_emoji_regex,
@@ -10,7 +11,7 @@ from perfect_regex import (
 )
 
 
-class Data4ML:
+class Data4ML(ABC):
     def __init__(self, path_to_config="./data_params.json"):
         cfg = self.read_json(path_to_config)
 
@@ -25,18 +26,15 @@ class Data4ML:
             "\nКарта",
             "\nСтикер",
         ]
-
-    def make_data(self):
-        HOME_FOLDER = "../messages"  # add to json
-
-        RES = []
-        for folder in self.get_list_of_folders(HOME_FOLDER):
-            files = self.get_list_of_files_in_folder(
-                os.path.join(HOME_FOLDER, folder), limit=4
-            )
-            if files:
-                RES.append(self.parse_html(os.path.join(HOME_FOLDER, folder), files))
-
+        
+    @abstractmethod
+    def make_data():
+        pass
+    
+    @abstractmethod
+    def parse_html(self, folder: str, files: list) -> list:
+        pass
+    
     def get_list_of_folders(self, messages_path: str) -> list:
         folders = []
 
@@ -53,11 +51,10 @@ class Data4ML:
                 folders.append(folder)
         else:
             print(f"No such directory: {messages_path}")
-
         return folders
 
     def get_list_of_files_in_folder(self, folder_name: str, limit=1) -> list:
-
+        
         files = []
         if os.path.isdir(folder_name):
             # Get list of only html files from folder:
@@ -74,24 +71,11 @@ class Data4ML:
             )
         else:
             print(f"No such directory: {folder_name}")
-
         return files
-
-    def parse_html(self, folder: str, files: list):
-        messages = []
-
-        for file in files:
-            with open(os.path.join(folder, file), "rb") as f:
-                soup = BeautifulSoup(f, "lxml")
-
-            for message in soup.find_all("div", {"class": "message"}):
-                message = message.text.strip()
-                messages.append(message[message.find("\n") + 1 :])
-
-        messages = messages[::-1]  # reverse
-        return messages
-
+    
+    
     def clear_message(self, messages: list) -> list:
+        assert(isinstance(messages, list))
         cleared_messages = []
         for i in messages:
             # If `Ссылка` in message - not append this message:
@@ -124,3 +108,36 @@ class Data4ML:
         with open(path_to_config, "r") as f:
             cfg = json.load(f)
         return cfg
+
+    
+class Data4TextGeneration(Data4ML):
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def make_data(self) -> list:
+        RES = []
+        for folder in self.get_list_of_folders(HOME_FOLDER):
+            files = self.get_list_of_files_in_folder(
+                os.path.join(HOME_FOLDER, folder), limit=4
+            )
+            if files:
+                RES.append(self.parse_html(os.path.join(HOME_FOLDER, folder), files))
+        return RES
+                
+
+    def parse_html(self, folder: str, files: list) -> list:
+        messages = []
+
+        for file in files:
+            with open(os.path.join(folder, file), "rb") as f:
+                soup = BeautifulSoup(f, "lxml")
+
+            for message in soup.find_all("div", {"class": "message"}):
+                message = message.text.strip()
+                messages.append(message[message.find("\n") + 1 :])
+
+        messages = messages[::-1]  # reverse
+        return messages
+
+

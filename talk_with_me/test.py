@@ -1,5 +1,5 @@
 import unittest
-from data4ml import Data4ML
+from data4ml import Data4TextGeneration
 from perfect_regex import (
     perfect_url_regex,
     perfect_emoji_regex,
@@ -13,7 +13,7 @@ from pathlib import Path
 
 class TestData4ML(unittest.TestCase):
     def setUp(self):
-        self.data4ml = Data4ML()
+        self.TextGen = Data4TextGeneration()
 
     def test_get_list_of_files_in_folder(self):
         def create_tmp_files(
@@ -44,7 +44,7 @@ class TestData4ML(unittest.TestCase):
                     p = Path(path)
                     p.rename(Path(p.parent, f"messages{i}{p.suffix}"))
 
-                files = self.data4ml.get_list_of_files_in_folder(dirpath, **kwargs)
+                files = self.TextGen.get_list_of_files_in_folder(dirpath, **kwargs)
                 if files_count:
                     # Check the number of files in a folder:
                     self.assertEqual(len(files), answer)
@@ -104,7 +104,7 @@ class TestData4ML(unittest.TestCase):
                     p = Path(path)
                     p.rename(Path(p.parent, folder_name))
 
-                folders = self.data4ml.get_list_of_folders(dirpath)
+                folders = self.TextGen.get_list_of_folders(dirpath)
                 self.assertEqual(len(folders), answer)
 
         create_tmp_folders(0, [])
@@ -138,7 +138,7 @@ class TestData4ML(unittest.TestCase):
             "А это 8(800)555-35-35 мой номер": "А это мой номер",
         }
         for key, value in samples.items():
-            self.assertEqual(self.data4ml.clear_message([key]), [value])
+            self.assertEqual(self.TextGen.clear_message([key]), [value])
 
         samples_empty = [
             "  ",
@@ -156,7 +156,7 @@ class TestData4ML(unittest.TestCase):
             "yanko.julia@yandex.ru",
         ]
         for message in samples_empty:
-            self.assertEqual(self.data4ml.clear_message([message]), [])
+            self.assertEqual(self.TextGen.clear_message([message]), [])
 
 
 class TestPerfectRegex(unittest.TestCase):
