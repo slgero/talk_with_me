@@ -17,15 +17,18 @@ class Data4ML(ABC):
         cfg = self.read_json(path_to_config)
 
         self.home_folder = "../messages"  # add to json
-        self.blacklist = ["Фотография", "Документ", "Видеозапись"]
+        self.blacklist = ["Фотография", "Документ", "Видеозапись", "Аудиозапись", "Видео"]
+        self.blacklist2 = [
+            "Запись на стене", "Видео", "История", "Подарок", "Аудиозапись", "Ссылка"
+        ]
         self.message_ends = [
             "прикреплённое сообщение",
             "прикреплённых сообщений",
             "прикреплённых сообщения",
             "Запись на стене",
             "Сообщение удалено",
-            "\nКарта",
-            "\nСтикер",
+            "Карта",
+            "Стикер",
         ]
 
     @abstractmethod
@@ -82,7 +85,7 @@ class Data4ML(ABC):
         cleared_messages = []
         for i in messages:
             # If `Ссылка` in message - not append this message:
-            if "\nСсылка\nhttps:" in i:
+            if "\nСсылка\nhttps:" in i or "#comments" in i:
                 continue
 
             # Delete trash such as stickers, attached messages:
@@ -102,6 +105,10 @@ class Data4ML(ABC):
 
             i = i.replace("  ", " ")  # remove double space
             i = i.strip()
+            
+            for attachment in self.blacklist2:
+                if i == attachment:
+                    continue
             if i:
                 cleared_messages.append(i)
         return cleared_messages
