@@ -17,9 +17,20 @@ class Data4ML(ABC):
         cfg = self.read_json(path_to_config)
 
         self.home_folder = "../messages"  # add to json
-        self.blacklist = ["Фотография", "Документ", "Видеозапись", "Аудиозапись", "Видео"]
+        self.blacklist = [
+            "Фотография",
+            "Документ",
+            "Видеозапись",
+            "Аудиозапись",
+            "Видео",
+        ]
         self.blacklist2 = [
-            "Запись на стене", "Видео", "История", "Подарок", "Аудиозапись", "Ссылка"
+            "Запись на стене",
+            "Видео",
+            "История",
+            "Подарок",
+            "Аудиозапись",
+            "Ссылка",
         ]
         self.message_ends = [
             "прикреплённое сообщение",
@@ -105,7 +116,7 @@ class Data4ML(ABC):
 
             i = i.replace("  ", " ")  # remove double space
             i = i.strip()
-            
+
             for attachment in self.blacklist2:
                 if i == attachment:
                     continue
