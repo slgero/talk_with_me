@@ -144,6 +144,6 @@ class Data4TextGeneration(Data4ML):
                 message = message.text.strip()
                 messages.append(message[message.find("\n") + 1 :])
 
-            #           Reverse the list to save the message sequence:
+            # Reverse the list to save the message sequence:
             all_messages.extend(messages[::-1])
         return all_messages
