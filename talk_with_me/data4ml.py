@@ -3,6 +3,7 @@ import json
 import os
 import re
 from abc import ABC, abstractmethod
+from tqdm import tqdm
 from perfect_regex import (
     perfect_url_regex,
     perfect_emoji_regex,
@@ -123,7 +124,7 @@ class Data4TextGeneration(Data4ML):
 
     def make_data(self, limit=2) -> list:
         result = []
-        for folder in self.get_list_of_folders(self.home_folder):
+        for folder in tqdm(self.get_list_of_folders(self.home_folder)):
             parent_folder = os.path.join(self.home_folder, folder)
             files = self.get_list_of_files_in_folder(parent_folder, limit=limit)
             if files:
