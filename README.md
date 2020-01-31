@@ -1,8 +1,7 @@
-# Talk with me
-
+# Talk With Me
 
 <p align='center'>
-	<img src='logo.png'>
+	<img src="logo.png" width="450" title="Talk With Me">
 <br><br>
 </p>
 
