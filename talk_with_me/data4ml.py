@@ -23,15 +23,12 @@ class Data4ML(ABC):
             "Видеозапись",
             "Аудиозапись",
             "Видео",
-        ]
-        self.blacklist2 = [
-            "Запись на стене",
-            "Видео",
             "История",
+            "Запись на стене",
             "Подарок",
-            "Аудиозапись",
             "Ссылка",
         ]
+
         self.message_ends = [
             "прикреплённое сообщение",
             "прикреплённых сообщений",
@@ -106,7 +103,8 @@ class Data4ML(ABC):
 
             # Delete attachments such as photos, documents, ect.:
             for attachment in self.blacklist:
-                i = re.sub(f"\n{attachment}\n" + perfect_url_regex, "", i)
+                i = re.sub(f"[\n]?{attachment}[\n]?" + perfect_url_regex, "", i)
+                i = re.sub(f"[\n]?{attachment}[\n]?", "", i)
 
             # Delete trash:
             i = re.sub(perfect_emoji_regex, "", i)
@@ -117,9 +115,6 @@ class Data4ML(ABC):
             i = i.replace("  ", " ")  # remove double space
             i = i.strip()
 
-            for attachment in self.blacklist2:
-                if i == attachment:
-                    continue
             if i:
                 cleared_messages.append(i)
         return cleared_messages
@@ -153,6 +148,7 @@ class Data4TextGeneration(Data4ML):
 
     def parse_html(self, parent_folder: str, files: list) -> list:
 
+        assert isinstance(files, list)
         all_messages = []
         for file in files:
             with open(os.path.join(parent_folder, file), "rb") as f:

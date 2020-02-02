@@ -138,6 +138,7 @@ class TestData4ML(unittest.TestCase):
             "Вот мой номер телефона: 8(800)555-35-35": "Вот мой номер телефона:",
             "8(800)555-35-35 это мой номер": "это мой номер",
             "А это 8(800)555-35-35 мой номер": "А это мой номер",
+            "Весело\nАудиозапись": "Весело",
         }
         for key, value in samples.items():
             self.assertEqual(self.TextGen.clear_message([key]), [value])
@@ -213,6 +214,11 @@ class TestData4TextGeneration(unittest.TestCase):
         parent_folder = "talk_with_me/data4test/153164714"
         files = ["messages0.html"]
         self.assertEqual(self.data4gen.parse_html(parent_folder, files), answer)
+
+        # Test function attributes:
+        self.assertRaises(
+            AssertionError, self.data4gen.parse_html, parent_folder, "messages0.html"
+        )
 
         # Test wrong path:
         parent_folder = "wrong_path"
