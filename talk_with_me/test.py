@@ -139,6 +139,11 @@ class TestData4ML(unittest.TestCase):
             "8(800)555-35-35 это мой номер": "это мой номер",
             "А это 8(800)555-35-35 мой номер": "А это мой номер",
             "Весело\nАудиозапись": "Весело",
+            "Посмотри это видео": "Посмотри это видео",
+            "Что за фотография": "Что за фотография",
+            "Это мой подарок": "Это мой подарок",
+            "История жизни": "История жизни",
+            "жизни История": "жизни"  # it is necessary
         }
         for key, value in samples.items():
             self.assertEqual(self.TextGen.clear_message([key]), [value])
@@ -158,6 +163,7 @@ class TestData4ML(unittest.TestCase):
             "\n2 прикреплённых сообщения",
             "\n25 прикреплённых сообщений",
             "yanko.julia@yandex.ru",
+            "Аудиозапись\n\nАудиозапись\n\nАудиозапись\n\nАудиозапись"
         ]
         for message in samples_empty:
             self.assertEqual(self.TextGen.clear_message([message]), [])

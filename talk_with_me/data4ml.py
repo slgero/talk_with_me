@@ -104,13 +104,14 @@ class Data4ML(ABC):
             # Delete attachments such as photos, documents, ect.:
             for attachment in self.blacklist:
                 i = re.sub(f"[\n]?{attachment}[\n]?" + perfect_url_regex, "", i)
-                i = re.sub(f"[\n]?{attachment}[\n]?", "", i)
+                i = re.sub(f"[\n]?{attachment}[\n]?$", "", i)
 
             # Delete trash:
             i = re.sub(perfect_emoji_regex, "", i)
             i = re.sub(perfect_email_regex, "", i)
             i = re.sub(perfect_phone_regex, " ", i)
             i = re.sub(perfect_url_regex, "", i)
+            i = re.sub(f"[\n]?Аудиозапись[\n]?", "", i)
 
             i = i.replace("  ", " ")  # remove double space
             i = i.strip()
