@@ -143,7 +143,7 @@ class TestData4ML(unittest.TestCase):
             "Что за фотография": "Что за фотография",
             "Это мой подарок": "Это мой подарок",
             "История жизни": "История жизни",
-            "жизни История": "жизни"  # it is necessary
+            "жизни История": "жизни",  # it is necessary
         }
         for key, value in samples.items():
             self.assertEqual(self.TextGen.clear_message([key]), [value])
@@ -163,7 +163,7 @@ class TestData4ML(unittest.TestCase):
             "\n2 прикреплённых сообщения",
             "\n25 прикреплённых сообщений",
             "yanko.julia@yandex.ru",
-            "Аудиозапись\n\nАудиозапись\n\nАудиозапись\n\nАудиозапись"
+            "Аудиозапись\n\nАудиозапись\n\nАудиозапись\n\nАудиозапись",
         ]
         for message in samples_empty:
             self.assertEqual(self.TextGen.clear_message([message]), [])
