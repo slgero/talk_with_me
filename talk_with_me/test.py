@@ -117,7 +117,7 @@ class TestData4ML(unittest.TestCase):
         create_tmp_folders(1, ["185144161", "-185144161", "18514", "2000000043"])
         create_tmp_folders(2, ["185144161", "185144162"])
 
-    def test_clear_message(self):
+    def test_clear_messages(self):
 
         # Testing for garbage removal from messages:
         samples = {
@@ -146,7 +146,7 @@ class TestData4ML(unittest.TestCase):
             "жизни История": "жизни",  # it is necessary
         }
         for key, value in samples.items():
-            self.assertEqual(self.TextGen.clear_message([key]), [value])
+            self.assertEqual(self.TextGen.clear_messages([key]), [value])
 
         # Testing deleting an entire message:
         samples_empty = [
@@ -166,10 +166,10 @@ class TestData4ML(unittest.TestCase):
             "Аудиозапись\n\nАудиозапись\n\nАудиозапись\n\nАудиозапись",
         ]
         for message in samples_empty:
-            self.assertEqual(self.TextGen.clear_message([message]), [])
+            self.assertEqual(self.TextGen.clear_messages([message]), [])
 
         # Test atribute:
-        self.assertRaises(AssertionError, self.TextGen.clear_message, "message")
+        self.assertRaises(AssertionError, self.TextGen.clear_messages, "message")
 
     def test_read_json(self):
         # Test valid path:

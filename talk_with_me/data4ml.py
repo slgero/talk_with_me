@@ -88,37 +88,37 @@ class Data4ML(ABC):
             print(f"No such directory: {folder_name}")
         return files
 
-    def clear_message(self, messages: list) -> list:
-        assert isinstance(messages, list)
-        cleared_messages = []
-        for i in messages:
-            # If `Ссылка` in message - not append this message:
-            if "\nСсылка\nhttps:" in i or "#comments" in i:
-                continue
+    def _clear_message(self, message: str) -> str:
+        assert isinstance(message, str)
 
-            # Delete trash such as stickers, attached messages:
-            for end in self.message_ends:
-                if i.endswith(end):
-                    i = i[: i.rfind("\n")]
+        # If `Ссылка` in message - not append this message:
+        if "\nСсылка\nhttps:" in message or "#comments" in message:
+            return ""
 
-            # Delete attachments such as photos, documents, ect.:
-            for attachment in self.blacklist:
-                i = re.sub(f"[\n]?{attachment}[\n]?" + perfect_url_regex, "", i)
-                i = re.sub(f"[\n]?{attachment}[\n]?$", "", i)
+        # Delete trash such as stickers, attached messages:
+        for end in self.message_ends:
+            if message.endswith(end):
+                message = message[: message.rfind("\n")]
 
-            # Delete trash:
-            i = re.sub(perfect_emoji_regex, "", i)
-            i = re.sub(perfect_email_regex, "", i)
-            i = re.sub(perfect_phone_regex, " ", i)
-            i = re.sub(perfect_url_regex, "", i)
-            i = re.sub(f"[\n]?Аудиозапись[\n]?", "", i)
+        # Delete attachments such as photos, documents, ect.:
+        for attachment in self.blacklist:
+            message = re.sub(f"[\n]?{attachment}[\n]?" + perfect_url_regex, "", message)
+            message = re.sub(f"[\n]?{attachment}[\n]?$", "", message)
 
-            i = i.replace("  ", " ")  # remove double space
-            i = i.strip()
+        # Delete trash:
+        message = re.sub(perfect_emoji_regex, "", message)
+        message = re.sub(perfect_email_regex, "", message)
+        message = re.sub(perfect_phone_regex, " ", message)
+        message = re.sub(perfect_url_regex, "", message)
+        message = re.sub(f"[\n]?Аудиозапись[\n]?", "", message)
+        message = re.sub("  ", " ", message)
+        message = message.strip()
 
-            if i:
-                cleared_messages.append(i)
-        return cleared_messages
+        return message
+
+    @staticmethod
+    def clear_messages(self, messages: list) -> list:
+        pass
 
     @staticmethod
     def read_json(path_to_config: str) -> dict:
@@ -143,7 +143,7 @@ class Data4TextGeneration(Data4ML):
             files = self.get_list_of_files_in_folder(parent_folder, limit=limit)
             if files:
                 messages = self.parse_html(parent_folder, files)
-                clear_messages = self.clear_message(messages)
+                clear_messages = self.clear_messages(messages)
                 result.append(clear_messages)
         return result
 
@@ -163,3 +163,13 @@ class Data4TextGeneration(Data4ML):
             # Reverse the list to save the message sequence:
             all_messages.extend(messages[::-1])
         return all_messages
+
+    def clear_messages(self, messages: list) -> list:
+        assert isinstance(messages, list)
+        cleared_messages = []
+        for message in messages:
+            message = self._clear_message(message)
+            if message:
+                cleared_messages.append(message)
+
+        return cleared_messages
