@@ -45,6 +45,21 @@ class Data4ML(ABC):
 
     @abstractmethod
     def parse_html(self, folder: str, files: list) -> list:
+        """
+        Parse text from html and place it in the correct order.
+        
+        Parameters
+        ----------
+        parent_folder : str
+            Parent directory where the `files` are located.
+        files : list of str
+            HTML files for parsing.
+            
+        Returns
+        -------
+        list if str
+            Messages in the correct order.
+        """
         pass
 
     def get_list_of_folders(self, messages_path: str) -> list:
@@ -90,10 +105,10 @@ class Data4ML(ABC):
 
     def _clear_message(self, message: str) -> str:
         assert isinstance(message, str)
-
+        
         # If `Ссылка` in message - not append this message:
         if "\nСсылка\nhttps:" in message or "#comments" in message:
-            return ""
+            return ''
 
         # Delete trash such as stickers, attached messages:
         for end in self.message_ends:
@@ -115,11 +130,13 @@ class Data4ML(ABC):
         message = message.strip()
 
         return message
-
+    
+    
     @staticmethod
     def clear_messages(self, messages: list) -> list:
-        pass
+        pass 
 
+    
     @staticmethod
     def read_json(path_to_config: str) -> dict:
         with open(path_to_config, "r") as f:
@@ -163,7 +180,7 @@ class Data4TextGeneration(Data4ML):
             # Reverse the list to save the message sequence:
             all_messages.extend(messages[::-1])
         return all_messages
-
+    
     def clear_messages(self, messages: list) -> list:
         assert isinstance(messages, list)
         cleared_messages = []

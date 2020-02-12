@@ -19,3 +19,6 @@ coverage.xml
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# Pytorch models
+.pth
