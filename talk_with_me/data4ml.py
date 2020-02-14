@@ -131,7 +131,7 @@ class Data4ML(ABC):
 
         return message
 
-    @staticmethod
+    @abstractmethod
     def clear_messages(self, messages: list) -> list:
         pass
 
@@ -188,3 +188,115 @@ class Data4TextGeneration(Data4ML):
                 cleared_messages.append(message)
 
         return cleared_messages
+
+
+class Data4Chatbot(Data4ML):
+    def __init__(self, max_length=10, is_normalize=True, **kwargs):
+        super().__init__(**kwargs)
+        self.is_normalize = is_normalize
+        self.max_length = max_length
+
+    def make_data(self):
+        pass
+
+    def parse_html(self, parent_folder: str, files: list) -> list:
+
+        assert isinstance(files, list)
+        all_messages = []
+        for file in files:
+            with open(os.path.join(parent_folder, file), "rb") as f:
+                soup = BeautifulSoup(f, "lxml")
+
+            messages = []
+            for message in soup.find_all("div", {"class": "message"}):
+                message = message.text.strip()
+                messages.append(message)
+
+            # Reverse the list to save the message sequence:
+            all_messages.extend(messages[::-1])
+        return all_messages
+
+    def normalize_message(self, s: str) -> str:
+        """Lowercase, trim, and remove non-letter characters"""
+
+        s = s.lower().strip()
+        s = re.sub(r"([.!?])", r" \1", s)  # add space before `.`, `!` or `?`
+        s = re.sub(r"[^а-яА-ЯёЁa-zA-Z.!?]+", r" ", s)  # remove non-letter characters
+        s = re.sub(r"\s+", r" ", s).strip()
+        return s
+
+    def transform_message(self, message: str) -> str:
+        """
+        Make first char upper and add a dot in the end of sentence.
+        If `self.is_normalize` is True, normalize the message.
+        """
+
+        if message:
+            message = message[0].upper() + message[1:]
+            if message[-1].isalpha():
+                message += "."
+        if self.is_normalize:
+            message = self.normalize_message(message)
+        return message
+
+    def filter_pair(self, p):
+        """Return True if both sentences in a pair 'p' are under the `self.max_length` threshold.
+        """
+
+        return (
+            len(p[0].split(" ")) < self.max_length
+            and len(p[1].split(" ")) < self.max_length
+        )
+
+    def filter_pairs(self, pairs):
+        """Filter pairs using filterPair condition.
+        """
+
+        return [pair for pair in pairs if self.filter_pair(pair)]
+
+    def get_pairs(self, messages: list) -> list:
+        pairs = [[messages[i - 1], messages[i]] for i in range(1, len(messages))]
+        return self.filter_pairs(pairs)
+
+    def clear_messages(self, messages: list) -> list:
+        messages = []
+
+        # Who start the dialog:
+        last_author = all_messages[0][: all_messages[0].find(",")]
+        skip_next_sent = False
+        for message in all_messages:
+            author = message[: message.find(",")]
+            message = message[message.find("\n") + 1 :]
+            clear_message = self.transform_message(chatbot._clear_message(message))
+            if clear_message:
+
+                if author == last_author:  # still one message
+                    if messages:
+                        messages[-1] += " " + clear_message
+                    else:  # for the first iteration
+                        messages.append(clear_message)
+                else:  # if author change
+                    messages.append(clear_message)
+
+                last_author = author
+
+            # TODO:
+            """
+            Продумать насчёт пустых сообщений. Например, это сообщение:
+                Вы: Привет, скинь фотку.
+                Они: [Фото#1]
+                Вы: Спасибо
+                Они: [Фото#2]
+                Вы: Большое спасибо!
+                
+            Очистится в:
+                Вы: Привет, скинь фотку.
+                Вы: Спасибо
+                Вы: Большое спасибо!
+                
+            Если менять автора каждый раз, то получится как выше, а если не менять, то::
+                Вы: Привет, скинь фотку. Спасибо. Большое спасибо!
+                
+            И что вот лучше?
+            """
+        return messages

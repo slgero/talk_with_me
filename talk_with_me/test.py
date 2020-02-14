@@ -1,5 +1,5 @@
 import unittest
-from data4ml import Data4TextGeneration
+from data4ml import Data4TextGeneration, Data4Chatbot
 from perfect_regex import (
     perfect_url_regex,
     perfect_emoji_regex,
@@ -184,10 +184,8 @@ class TestData4ML(unittest.TestCase):
 
 class TestData4Chatbot(unittest.TestCase):
     def setUp(self):
-        pass
-
-    #         self.data4bot = Data4Chatbot()
-    #         self.data4bot.home_folder = "./talk_with_me/data4test"
+        self.data4bot = Data4Chatbot()
+        self.data4bot.home_folder = "./talk_with_me/data4test"
 
     def test_parse_html(self):
         pass
