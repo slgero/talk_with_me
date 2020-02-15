@@ -198,63 +198,73 @@ class TestData4Chatbot(unittest.TestCase):
 
     def test_make_data(self):
         pass
-    
+
     def test_check_max_length(self):
-        self.assertTrue(self.data4bot._check_max_length(['* '*5, '* '*5]))
-        self.assertFalse(self.data4bot._check_max_length(['* '*5, '* '*11]))
-        self.assertFalse(self.data4bot._check_max_length(['* '*11, '* '*5]))
-        self.assertFalse(self.data4bot._check_max_length(['* '*11, '* '*11]))
-        
+        self.assertTrue(self.data4bot._check_max_length(["* " * 5, "* " * 5]))
+        self.assertFalse(self.data4bot._check_max_length(["* " * 5, "* " * 11]))
+        self.assertFalse(self.data4bot._check_max_length(["* " * 11, "* " * 5]))
+        self.assertFalse(self.data4bot._check_max_length(["* " * 11, "* " * 11]))
+
     def test_filter_pairs(self):
         to_check = [
-            ['* '*11, '* '*11],
-            ['* '*5, '* '*5],
-            ['* '*6, '* '*6],
-            ['* '*6, '* '*11],
-            ['* '*11, '* '*6],
+            ["* " * 11, "* " * 11],
+            ["* " * 5, "* " * 5],
+            ["* " * 6, "* " * 6],
+            ["* " * 6, "* " * 11],
+            ["* " * 11, "* " * 6],
         ]
-        res = [['* '*5, '* '*5], ['* '*6, '* '*6]]
+        res = [["* " * 5, "* " * 5], ["* " * 6, "* " * 6]]
         self.assertEqual(self.data4bot.filter_pairs(to_check), res)
 
         empty_list = [[], []]
         self.assertRaises(IndexError, self.data4bot.filter_pairs, empty_list)
-        
+
     def test_get_pais(self):
-        to_check = ['1', '2 2', '3 3', '4 4', '5 5 5', '6 6 6 6']
-        ans1 = [['1', '2 2'], ['2 2', '3 3'], ['3 3', '4 4'], ['4 4', '5 5 5'], ['5 5 5', '6 6 6 6']]
-        ans2 = [['1', '2 2'], ['2 2', '3 3'], ['3 3', '4 4']]
+        to_check = ["1", "2 2", "3 3", "4 4", "5 5 5", "6 6 6 6"]
+        ans1 = [
+            ["1", "2 2"],
+            ["2 2", "3 3"],
+            ["3 3", "4 4"],
+            ["4 4", "5 5 5"],
+            ["5 5 5", "6 6 6 6"],
+        ]
+        ans2 = [["1", "2 2"], ["2 2", "3 3"], ["3 3", "4 4"]]
         ans3 = []
-        
+
         self.assertEqual(self.data4bot.get_pairs(to_check), ans1)
-        
+
         self.data4bot.max_length = 3
         self.assertEqual(self.data4bot.get_pairs(to_check), ans2)
-        
+
         self.data4bot.max_length = 1
         self.assertEqual(self.data4bot.get_pairs(to_check), ans3)
-        
+
     def test_normalize_message(self):
-        
+
         # ru:
-        self.assertEqual(self.data4bot.normalize_message('тест'), 'тест')
-        self.assertEqual(self.data4bot.normalize_message('тест.'), 'тест .')
-        self.assertEqual(self.data4bot.normalize_message('тест...'), 'тест . . .')
-        self.assertEqual(self.data4bot.normalize_message('тест!?'), 'тест ! ?')
-        self.assertEqual(self.data4bot.normalize_message('тест   тест'), 'тест тест')
-        self.assertEqual(self.data4bot.normalize_message('тест12 3'), 'тест')
-        self.assertEqual(self.data4bot.normalize_message('тЁсть'), 'тёсть')
-        self.assertEqual(self.data4bot.normalize_message('ЁёЙйЪъЬь'), 'ёёййъъьь')
-        self.assertEqual(self.data4bot.normalize_message('тест-test'), 'тест test')
-        
+        self.assertEqual(self.data4bot.normalize_message("тест"), "тест")
+        self.assertEqual(self.data4bot.normalize_message("тест."), "тест .")
+        self.assertEqual(self.data4bot.normalize_message("тест..."), "тест . . .")
+        self.assertEqual(self.data4bot.normalize_message("тест!?"), "тест ! ?")
+        self.assertEqual(self.data4bot.normalize_message("тест   тест"), "тест тест")
+        self.assertEqual(self.data4bot.normalize_message("тест12 3"), "тест")
+        self.assertEqual(self.data4bot.normalize_message("тЁсть"), "тёсть")
+        self.assertEqual(self.data4bot.normalize_message("ЁёЙйЪъЬь"), "ёёййъъьь")
+        self.assertEqual(self.data4bot.normalize_message("тест-test"), "тест test")
+
         # en:
-        self.assertEqual(self.data4bot.normalize_message('test'), 'test')
-        self.assertEqual(self.data4bot.normalize_message('test.'), 'test .')
-        self.assertEqual(self.data4bot.normalize_message('test123'), 'test')
-        self.assertEqual(self.data4bot.normalize_message('test, test'), 'test test')
-        self.assertEqual(self.data4bot.normalize_message('test: test-test'), 'test test test')
-        self.assertEqual(self.data4bot.normalize_message('test1  1 1 1 test'), 'test test')
-        self.assertEqual(self.data4bot.normalize_message('Hello.'), 'hello .')
-        self.assertEqual(self.data4bot.normalize_message('TEST'), 'test')
+        self.assertEqual(self.data4bot.normalize_message("test"), "test")
+        self.assertEqual(self.data4bot.normalize_message("test."), "test .")
+        self.assertEqual(self.data4bot.normalize_message("test123"), "test")
+        self.assertEqual(self.data4bot.normalize_message("test, test"), "test test")
+        self.assertEqual(
+            self.data4bot.normalize_message("test: test-test"), "test test test"
+        )
+        self.assertEqual(
+            self.data4bot.normalize_message("test1  1 1 1 test"), "test test"
+        )
+        self.assertEqual(self.data4bot.normalize_message("Hello."), "hello .")
+        self.assertEqual(self.data4bot.normalize_message("TEST"), "test")
 
 
 class TestData4TextGeneration(unittest.TestCase):
