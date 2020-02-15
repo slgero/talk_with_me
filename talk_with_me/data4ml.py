@@ -191,9 +191,8 @@ class Data4TextGeneration(Data4ML):
 
 
 class Data4Chatbot(Data4ML):
-    def __init__(self, max_length=10, is_normalize=True, **kwargs):
+    def __init__(self, max_length=10, **kwargs):
         super().__init__(**kwargs)
-        self.is_normalize = is_normalize
         self.max_length = max_length
 
     def make_data(self):
@@ -225,20 +224,6 @@ class Data4Chatbot(Data4ML):
         s = re.sub(r"\s+", r" ", s).strip()
         return s
 
-    def transform_message(self, message: str) -> str:
-        """
-        Make first char upper and add a dot in the end of sentence.
-        If `self.is_normalize` is True, normalize the message.
-        """
-
-        if message:
-            message = message[0].upper() + message[1:]
-            if message[-1].isalpha():
-                message += "."
-        if self.is_normalize:
-            message = self.normalize_message(message)
-        return message
-
     def _check_max_length(self, p: list) -> bool:
         """Return True if both sentences in a pair 'p' are under the `self.max_length` threshold.
         """
@@ -258,7 +243,7 @@ class Data4Chatbot(Data4ML):
         pairs = [[messages[i - 1], messages[i]] for i in range(1, len(messages))]
         return self.filter_pairs(pairs)
 
-    def clear_messages(self, messages: list) -> list:
+    def clear_messages(self, all_messages: list) -> list:
         messages = []
 
         # Who start the dialog:
@@ -267,12 +252,12 @@ class Data4Chatbot(Data4ML):
         for message in all_messages:
             author = message[: message.find(",")]
             message = message[message.find("\n") + 1 :]
-            clear_message = self.transform_message(chatbot._clear_message(message))
+            clear_message = self.normalize_message(self._clear_message(message))
             if clear_message:
 
                 if author == last_author:  # still one message
                     if messages:
-                        messages[-1] += " " + clear_message
+                        messages[-1] += "\n" + clear_message
                     else:  # for the first iteration
                         messages.append(clear_message)
                 else:  # if author change
@@ -298,5 +283,13 @@ class Data4Chatbot(Data4ML):
                 Вы: Привет, скинь фотку. Спасибо. Большое спасибо!
                 
             И что вот лучше?
+            """
+            
+            # TODO2:
+            """
+            1. Использовать неронку или ещё что-нибудь, чтобы генерировать пунктуацию уже после того, как мы сделали предсказание
+            2. NER - увеличивать буквы у имён
+            
+            3. Нужны ли нам знаки вопроса и точки?
             """
         return messages
