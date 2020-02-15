@@ -239,7 +239,7 @@ class Data4Chatbot(Data4ML):
             message = self.normalize_message(message)
         return message
 
-    def filter_pair(self, p):
+    def _check_max_length(self, p: list) -> bool:
         """Return True if both sentences in a pair 'p' are under the `self.max_length` threshold.
         """
 
@@ -248,11 +248,11 @@ class Data4Chatbot(Data4ML):
             and len(p[1].split(" ")) < self.max_length
         )
 
-    def filter_pairs(self, pairs):
+    def filter_pairs(self, pairs: list) -> list:
         """Filter pairs using filterPair condition.
         """
 
-        return [pair for pair in pairs if self.filter_pair(pair)]
+        return [pair for pair in pairs if self._check_max_length(pair)]
 
     def get_pairs(self, messages: list) -> list:
         pairs = [[messages[i - 1], messages[i]] for i in range(1, len(messages))]
