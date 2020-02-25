@@ -251,7 +251,7 @@ class TestData4Chatbot(unittest.TestCase):
 
     def test_filter_pairs(self):
         to_check = [
-            ["* " * 11, "* " * 11],
+            ["* "* 11, "* " * 11],
             ["* " * 5, "* " * 5],
             ["* " * 6, "* " * 6],
             ["* " * 6, "* " * 11],
