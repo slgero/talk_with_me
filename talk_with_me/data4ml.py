@@ -203,7 +203,7 @@ class Data4Chatbot(Data4ML):
             if files:
                 messages = self.parse_html(parent_folder, files)
                 clear_messages = self.clear_messages(messages)
-                result.append(clear_messages)
+                result.extend(self.get_pairs(clear_messages))
         return result
 
     def parse_html(self, parent_folder: str, files: list) -> list:
