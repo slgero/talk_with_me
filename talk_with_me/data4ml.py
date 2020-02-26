@@ -227,7 +227,7 @@ class Data4Chatbot(Data4ML):
         """Lowercase, trim, and remove non-letter characters"""
 
         s = s.lower().strip()
-        s = re.sub('\n', '.', s)
+        s = re.sub("\n", ".", s)
         s = re.sub(r"([.!?])", r" \1", s)  # add space before `.`, `!` or `?`
         s = re.sub(r"[^а-яА-ЯёЁa-zA-Z.!?]+", r" ", s)  # remove non-letter characters
         s = re.sub(r"\s+", r" ", s).strip()
@@ -254,8 +254,8 @@ class Data4Chatbot(Data4ML):
 
     def check_last_character(self, messages):
         if not messages[-1][-1].isalnum():
-            messages[-1] += ' . '
-    
+            messages[-1] += " . "
+
     def clear_messages(self, all_messages: list) -> list:
         messages = []
 
