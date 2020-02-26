@@ -188,7 +188,7 @@ class TestData4Chatbot(unittest.TestCase):
         self.data4bot.home_folder = "./talk_with_me/data4test"
 
     def test_parse_html(self):
-        result = [
+        answer = [
              'Юлия Николаева, 23 мар 2016 в 20:48:28\nпришли фотки, пожалуйста',
              'Юлия Николаева, 23 мар 2016 в 20:48:55\nwrong@yandex.ru',
              'Вы, 23 мар 2016 в 21:51:32\nПривет, сейчас',
@@ -217,7 +217,7 @@ class TestData4Chatbot(unittest.TestCase):
              'Юлия Николаева, 5 июн 2016 в 19:26:30\nспасибо'
         ]
         
-        self.assertEqual(self.data4bot.parse_html('talk_with_me/data4test/153164714', ['messages0.html']), result)
+        self.assertEqual(self.data4bot.parse_html('talk_with_me/data4test/153164714', ['messages0.html']), answer)
         self.assertRaises(AssertionError, self.data4bot.parse_html, 'talk_with_me/data4test/153164714', 'messages0.html')
         self.assertRaises(FileNotFoundError, self.data4bot.parse_html, 'wrong_path', ['messages0.html'])
         
@@ -225,16 +225,16 @@ class TestData4Chatbot(unittest.TestCase):
         to_check = self.data4bot.parse_html('talk_with_me/data4test/153164714', ['messages0.html'])
         answer = [
             'пришли фотки пожалуйста',
-            'привет сейчас\nвсё',
-            'спасибо большое\nсережка перешли мне письмо смоленцевой .\nзаранее спасибо',
+            'привет сейчас \n всё',
+            'спасибо большое \n сережка перешли мне письмо смоленцевой . \n заранее спасибо',
             'какое именно ?',
-            'последнее . про кино\nспасибо',
-            'скинул\nподойдите завтра к смоленцевой',
+            'последнее . про кино \n спасибо',
+            'скинул \n подойдите завтра к смоленцевой',
             'зачем ?',
             'она попросила',
             'хорошо',
-            'юль\nне забывай что вы завтра в танцуете\nи своим передай',
-            'хорошо\nспасибо\nспасибо\nа до скольких ?\nспасибо'
+            'юль \n не забывай что вы завтра в танцуете \n и своим передай',
+            'хорошо \n спасибо \n спасибо \n а до скольких ? \n спасибо'
         ]
         
         self.assertEqual(self.data4bot.clear_messages(to_check), answer)

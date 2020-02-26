@@ -195,8 +195,16 @@ class Data4Chatbot(Data4ML):
         super().__init__(**kwargs)
         self.max_length = max_length
 
-    def make_data(self):
-        pass
+    def make_data(self, limit=2) -> list:
+        result = []
+        for folder in tqdm(self.get_list_of_folders(self.home_folder)):
+            parent_folder = os.path.join(self.home_folder, folder)
+            files = self.get_list_of_files_in_folder(parent_folder, limit=limit)
+            if files:
+                messages = self.parse_html(parent_folder, files)
+                clear_messages = self.clear_messages(messages)
+                result.append(clear_messages)
+        return result
 
     def parse_html(self, parent_folder: str, files: list) -> list:
 
@@ -219,6 +227,7 @@ class Data4Chatbot(Data4ML):
         """Lowercase, trim, and remove non-letter characters"""
 
         s = s.lower().strip()
+        s = re.sub('\n', '.', s)
         s = re.sub(r"([.!?])", r" \1", s)  # add space before `.`, `!` or `?`
         s = re.sub(r"[^а-яА-ЯёЁa-zA-Z.!?]+", r" ", s)  # remove non-letter characters
         s = re.sub(r"\s+", r" ", s).strip()
@@ -243,6 +252,10 @@ class Data4Chatbot(Data4ML):
         pairs = [[messages[i - 1], messages[i]] for i in range(1, len(messages))]
         return self.filter_pairs(pairs)
 
+    def check_last_character(self, messages):
+        if not messages[-1][-1].isalnum():
+            messages[-1] += ' . '
+    
     def clear_messages(self, all_messages: list) -> list:
         messages = []
 
@@ -257,7 +270,7 @@ class Data4Chatbot(Data4ML):
 
                 if author == last_author:  # still one message
                     if messages:
-                        messages[-1] += "\n" + clear_message
+                        messages[-1] += " \n " + clear_message
                     else:  # for the first iteration
                         messages.append(clear_message)
                 else:  # if author change
