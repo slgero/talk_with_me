@@ -3,3 +3,4 @@ lxml
 pytest-cov
 black
 tqdm
+typeguard

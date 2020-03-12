@@ -6,7 +6,6 @@ from perfect_regex import (
     perfect_email_regex,
     perfect_phone_regex,
 )
-import re
 import tempfile
 from pathlib import Path
 
@@ -38,7 +37,7 @@ class TestData4ML(unittest.TestCase):
             with tempfile.TemporaryDirectory() as dirpath:
                 for i in range_of_files:
                     # Create a tmp file:
-                    fd, path = tempfile.mkstemp(suffix=suffix, dir=dirpath)
+                    _, path = tempfile.mkstemp(suffix=suffix, dir=dirpath)
 
                     # Rename the file to bring it to standard:
                     p = Path(path)
@@ -169,7 +168,7 @@ class TestData4ML(unittest.TestCase):
             self.assertEqual(self.TextGen.clear_messages([message]), [])
 
         # Test atribute:
-        self.assertRaises(AssertionError, self.TextGen.clear_messages, "message")
+        self.assertRaises(TypeError, self.TextGen.clear_messages, "message")
 
     def test_read_json(self):
         # Test valid path:
@@ -224,7 +223,7 @@ class TestData4Chatbot(unittest.TestCase):
             answer,
         )
         self.assertRaises(
-            AssertionError,
+            TypeError,
             self.data4bot.parse_html,
             "talk_with_me/data4test/153164714",
             "messages0.html",
@@ -368,7 +367,7 @@ class TestData4TextGeneration(unittest.TestCase):
 
         # Test function attributes:
         self.assertRaises(
-            AssertionError, self.data4gen.parse_html, parent_folder, "messages0.html"
+            TypeError, self.data4gen.parse_html, parent_folder, "messages0.html"
         )
 
         # Test wrong path:

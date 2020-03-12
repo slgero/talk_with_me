@@ -3,6 +3,7 @@ import json
 import os
 import re
 from abc import ABC, abstractmethod
+from typeguard import typechecked
 from tqdm import tqdm
 from perfect_regex import (
     perfect_url_regex,
@@ -14,7 +15,7 @@ from perfect_regex import (
 
 class Data4ML(ABC):
     def __init__(self, path_to_config="./data_params.json"):
-        cfg = self.read_json(path_to_config)
+        self.cfg = self.read_json(path_to_config)
 
         self.home_folder = "../messages"  # add to json
         self.blacklist = [
@@ -40,11 +41,13 @@ class Data4ML(ABC):
         ]
 
     @abstractmethod
-    def make_data():
+    @typechecked
+    def make_data(self, limit: int):
         pass
 
     @abstractmethod
-    def parse_html(self, folder: str, files: list) -> list:
+    @typechecked
+    def parse_html(self, parent_folder: str, files: list) -> list:
         """
         Parse text from html and place it in the correct order.
         
@@ -62,6 +65,7 @@ class Data4ML(ABC):
         """
         pass
 
+    @typechecked
     def get_list_of_folders(self, messages_path: str) -> list:
         folders = []
 
@@ -83,6 +87,7 @@ class Data4ML(ABC):
             print(f"No such directory: {messages_path}")
         return folders
 
+    @typechecked
     def get_list_of_files_in_folder(self, folder_name: str, limit=1) -> list:
 
         files = []
@@ -96,15 +101,15 @@ class Data4ML(ABC):
             # Descending sort to consider message order:
             files = sorted(
                 files,
-                key=lambda x: int(re.search("messages(\d+)\.html", x).group(1)),
+                key=lambda x: int(re.search(r"messages(\d+)\.html", x).group(1)),
                 reverse=True,
             )
         else:
             print(f"No such directory: {folder_name}")
         return files
 
+    @typechecked
     def _clear_message(self, message: str) -> str:
-        assert isinstance(message, str)
 
         # If `Ссылка` in message - not append this message:
         if "\nСсылка\nhttps:" in message or "#comments" in message:
@@ -132,10 +137,12 @@ class Data4ML(ABC):
         return message
 
     @abstractmethod
-    def clear_messages(self, messages: list) -> list:
+    @typechecked
+    def clear_messages(self, all_messages: list) -> list:
         pass
 
     @staticmethod
+    @typechecked
     def read_json(path_to_config: str) -> dict:
         with open(path_to_config, "r") as f:
             cfg = json.load(f)
@@ -151,6 +158,7 @@ class Data4TextGeneration(Data4ML):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+    @typechecked    
     def make_data(self, limit=2) -> list:
         result = []
         for folder in tqdm(self.get_list_of_folders(self.home_folder)):
@@ -162,6 +170,7 @@ class Data4TextGeneration(Data4ML):
                 result.append(clear_messages)
         return result
 
+    @typechecked
     def parse_html(self, parent_folder: str, files: list) -> list:
 
         assert isinstance(files, list)
@@ -179,6 +188,7 @@ class Data4TextGeneration(Data4ML):
             all_messages.extend(messages[::-1])
         return all_messages
 
+    @typechecked
     def clear_messages(self, messages: list) -> list:
         assert isinstance(messages, list)
         cleared_messages = []
@@ -195,6 +205,7 @@ class Data4Chatbot(Data4ML):
         super().__init__(**kwargs)
         self.max_length = max_length
 
+    @typechecked
     def make_data(self, limit=2) -> list:
         result = []
         for folder in tqdm(self.get_list_of_folders(self.home_folder)):
@@ -206,9 +217,8 @@ class Data4Chatbot(Data4ML):
                 result.extend(self.get_pairs(clear_messages))
         return result
 
+    @typechecked
     def parse_html(self, parent_folder: str, files: list) -> list:
-
-        assert isinstance(files, list)
         all_messages = []
         for file in files:
             with open(os.path.join(parent_folder, file), "rb") as f:
@@ -223,6 +233,7 @@ class Data4Chatbot(Data4ML):
             all_messages.extend(messages[::-1])
         return all_messages
 
+    @typechecked
     def normalize_message(self, s: str) -> str:
         """Lowercase, trim, and remove non-letter characters"""
 
@@ -233,6 +244,7 @@ class Data4Chatbot(Data4ML):
         s = re.sub(r"\s+", r" ", s).strip()
         return s
 
+    @typechecked
     def _check_max_length(self, p: list) -> bool:
         """Return True if both sentences in a pair 'p' are under the `self.max_length` threshold.
         """
@@ -242,26 +254,29 @@ class Data4Chatbot(Data4ML):
             and len(p[1].split(" ")) < self.max_length
         )
 
+    @typechecked
     def filter_pairs(self, pairs: list) -> list:
         """Filter pairs using filterPair condition.
         """
 
         return [pair for pair in pairs if self._check_max_length(pair)]
 
+    @typechecked
     def get_pairs(self, messages: list) -> list:
         pairs = [[messages[i - 1], messages[i]] for i in range(1, len(messages))]
         return self.filter_pairs(pairs)
 
-    def check_last_character(self, messages):
+    @typechecked
+    def check_last_character(self, messages: list) -> None:
         if not messages[-1][-1].isalnum():
             messages[-1] += " . "
 
+    @typechecked
     def clear_messages(self, all_messages: list) -> list:
         messages = []
 
         # Who start the dialog:
         last_author = all_messages[0][: all_messages[0].find(",")]
-        skip_next_sent = False
         for message in all_messages:
             author = message[: message.find(",")]
             message = message[message.find("\n") + 1 :]
