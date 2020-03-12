@@ -22,7 +22,7 @@ class TestData4ML(unittest.TestCase):
             Сreate temporary files for testing.
             Params:
             ------
-            
+
             answer: int or list
                 Value for comparison.
             files_count: int or None (default=None)
@@ -83,10 +83,10 @@ class TestData4ML(unittest.TestCase):
         def create_tmp_folders(answer: int, folder_names: list):
             """
             Сreate temporary directories for testing.
-            
+
             Params:
             ------
-            
+
             answer: int
                 Value for comparison.
             folder_names: list

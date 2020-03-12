@@ -50,20 +50,19 @@ class Data4ML(ABC):
     def parse_html(self, parent_folder: str, files: list) -> list:
         """
         Parse text from html and place it in the correct order.
-        
+
         Parameters
         ----------
         parent_folder : str
             Parent directory where the `files` are located.
         files : list of str
             HTML files for parsing.
-            
+
         Returns
         -------
         list if str
             Messages in the correct order.
         """
-        pass
 
     @typechecked
     def get_list_of_folders(self, messages_path: str) -> list:
@@ -151,7 +150,7 @@ class Data4ML(ABC):
 
 class Data4TextGeneration(Data4ML):
     """
-    Collects the entire message together, both yours and other 
+    Collects the entire message together, both yours and other
     members in the correspondence.
     """
 
@@ -172,8 +171,6 @@ class Data4TextGeneration(Data4ML):
 
     @typechecked
     def parse_html(self, parent_folder: str, files: list) -> list:
-
-        assert isinstance(files, list)
         all_messages = []
         for file in files:
             with open(os.path.join(parent_folder, file), "rb") as f:
@@ -190,7 +187,6 @@ class Data4TextGeneration(Data4ML):
 
     @typechecked
     def clear_messages(self, messages: list) -> list:
-        assert isinstance(messages, list)
         cleared_messages = []
         for message in messages:
             message = self._clear_message(message)
@@ -246,7 +242,7 @@ class Data4Chatbot(Data4ML):
 
     @typechecked
     def _check_max_length(self, p: list) -> bool:
-        """Return True if both sentences in a pair 'p' are under the `self.max_length` threshold.
+        """Return True if both sentences in a pair 'p' are underthe `self.max_length` threshold.
         """
 
         return (
@@ -256,8 +252,7 @@ class Data4Chatbot(Data4ML):
 
     @typechecked
     def filter_pairs(self, pairs: list) -> list:
-        """Filter pairs using filterPair condition.
-        """
+        """Filter pairs using filterPair condition."""
 
         return [pair for pair in pairs if self._check_max_length(pair)]
 
@@ -301,15 +296,15 @@ class Data4Chatbot(Data4ML):
                 Вы: Спасибо
                 Они: [Фото#2]
                 Вы: Большое спасибо!
-                
+
             Очистится в:
                 Вы: Привет, скинь фотку.
                 Вы: Спасибо
                 Вы: Большое спасибо!
-                
+
             Если менять автора каждый раз, то получится как выше, а если не менять, то::
                 Вы: Привет, скинь фотку. Спасибо. Большое спасибо!
-                
+
             И что вот лучше?
             """
 
@@ -317,7 +312,7 @@ class Data4Chatbot(Data4ML):
             """
             1. Использовать неронку или ещё что-нибудь, чтобы генерировать пунктуацию уже после того, как мы сделали предсказание
             2. NER - увеличивать буквы у имён
-            
+
             3. Нужны ли нам знаки вопроса и точки?
             """
         return messages
