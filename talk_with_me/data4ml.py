@@ -158,7 +158,7 @@ class Data4TextGeneration(Data4ML):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    @typechecked    
+    @typechecked
     def make_data(self, limit=2) -> list:
         result = []
         for folder in tqdm(self.get_list_of_folders(self.home_folder)):
