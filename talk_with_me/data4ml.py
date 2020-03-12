@@ -188,7 +188,7 @@ class Data4TextGeneration(Data4ML):
     @typechecked
     def clear_messages(self, all_messages: list) -> list:
         cleared_messages = []
-        for message in messages:
+        for message in all_messages:
             message = self._clear_message(message)
             if message:
                 cleared_messages.append(message)
