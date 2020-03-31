@@ -110,7 +110,9 @@ class Data4ML(ABC):
         return folders
 
     @typechecked
-    def get_list_of_files_in_folder(self, folder_name: str, limit: int = 1) -> List[str]:
+    def get_list_of_files_in_folder(
+        self, folder_name: str, limit: int = 1
+    ) -> List[str]:
         """
         Returns a sorted list with files of messages if the number of files
         in the folder is greater than the limit
