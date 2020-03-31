@@ -1,8 +1,12 @@
-from bs4 import BeautifulSoup
+"""
+Module for preparing and clearing text data from VK messages.
+"""
 import json
 import os
 import re
 from abc import ABC, abstractmethod
+from typing import List
+from bs4 import BeautifulSoup
 from typeguard import typechecked
 from tqdm import tqdm
 from perfect_regex import (
@@ -14,7 +18,10 @@ from perfect_regex import (
 
 
 class Data4ML(ABC):
-    def __init__(self, path_to_config="./data_params.json"):
+    """The base class to prepare and clear text data from VK messages.
+    """
+
+    def __init__(self, path_to_config: str = "./data_params.json"):
         self.cfg = self.read_json(path_to_config)
 
         self.home_folder = "../messages"  # add to json
@@ -43,11 +50,12 @@ class Data4ML(ABC):
     @abstractmethod
     @typechecked
     def make_data(self, limit: int):
-        pass
+        """Starts a full cycle of preparing and cleaning text data from VK messages.
+        """
 
     @abstractmethod
     @typechecked
-    def parse_html(self, parent_folder: str, files: list) -> list:
+    def parse_html(self, parent_folder: str, files: list) -> List[str]:
         """
         Parse text from html and place it in the correct order.
 
@@ -60,12 +68,27 @@ class Data4ML(ABC):
 
         Returns
         -------
-        list if str
+        list оf str
             Messages in the correct order.
         """
 
     @typechecked
-    def get_list_of_folders(self, messages_path: str) -> list:
+    def get_list_of_folders(self, messages_path: str) -> List[str]:
+        """
+        Scans the folder and selects only valid chats, skipping group chats,
+        applications or some kind of service letters.
+
+        Parameters:
+        -----------
+        messages_path : str
+            Path to `messages` folder from archive.
+
+        Returns
+        -------
+        list of str
+            List of folders with valid chats.
+        """
+
         folders = []
 
         if os.path.isdir(messages_path):
@@ -87,7 +110,24 @@ class Data4ML(ABC):
         return folders
 
     @typechecked
-    def get_list_of_files_in_folder(self, folder_name: str, limit=1) -> list:
+    def get_list_of_files_in_folder(self, folder_name: str, limit: int = 1) -> List[str]:
+        """
+        Returns a sorted list with files of messages if the number of files
+        in the folder is greater than the limit
+
+        Parameters:
+        -----------
+        folder_name : str
+            The path to the folder in which files will be searched.
+        limit : int (default=1)
+            Limit the number of message files at which this chat  will be skipped.
+            In one file 300 messages. Most likely this is not a chat with your friend
+            if there is only one file in the folder. So it is better not to skip it.
+
+        Returns
+        -------
+            Sorted list with files of messages.
+        """
 
         files = []
         if os.path.isdir(folder_name):
@@ -109,6 +149,8 @@ class Data4ML(ABC):
 
     @typechecked
     def _clear_message(self, message: str) -> str:
+        """Сlean a message from attachments and garbage using regular expressions.
+        """
 
         # If `Ссылка` in message - not append this message:
         if "\nСсылка\nhttps:" in message or "#comments" in message:
@@ -197,7 +239,7 @@ class Data4TextGeneration(Data4ML):
 
 
 class Data4Chatbot(Data4ML):
-    def __init__(self, max_length=10, **kwargs):
+    def __init__(self, max_length: int = 10, **kwargs):
         super().__init__(**kwargs)
         self.max_length = max_length
 
